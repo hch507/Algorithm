@@ -1,13 +1,13 @@
 import java.util.Scanner
 
-fun main(){
-    var sc = Scanner(System.`in`)
-
+fun main() = with(Scanner(System.`in`)){
     val arr = ArrayList<Int>()
 
-    for (i in 1 .. 9){
-        arr.add(sc.nextInt())
+    for(i in 1..9){
+        arr.add(nextInt())
     }
 
-    print("${arr.maxOrNull()} ${arr.indexOf(arr.maxOrNull())+1}")
+    println("${arr.max()}")
+    println("${arr.indexOf(arr.max())+1}")
 }
+
