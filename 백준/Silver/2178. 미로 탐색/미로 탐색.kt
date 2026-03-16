@@ -1,57 +1,42 @@
-import java.util.*
-var n = 0
-var m = 0
-lateinit var map : Array<IntArray>
-lateinit var chk : Array<BooleanArray>
-var ex =0
-var ey =0
-var v : Queue<Array<Int>> = LinkedList()
-var v1 = Array(2){i->0}
-val dx = arrayOf(1,0,-1,0)
-val dy = arrayOf(0,1,0,-1)
+import java.io.BufferedReader
+import java.io.InputStreamReader
 
-fun main() = with(Scanner(System.`in`)){
-    val input = readLine()?.split(" ")
-    n = input?.get(0)!!.toInt()
-    m = input?.get(1)!!.toInt()
-    map = Array(n){IntArray(m)}
-    chk= Array(n){BooleanArray(m){false} }
-    for(i in 0 until n){
-        val line = nextLine()
-        for (j in 0 until m){
-            map[i][j]= line[j].toString().toInt()
 
-        }
-    }
+fun main() {
 
-    chk[0][0]=true
-    bfs(0,0)
-    println(map[n-1][m-1])
+    val br = BufferedReader(InputStreamReader(System.`in`))
+
+    val (n,m) = br.readLine().split(" ").map{it.toInt()}
+    val map = Array(n){br.readLine().map{it-'0'}.toIntArray()}
+
+    val result = bfs(0,0,map)
+    print(result)
 }
 
-fun bfs(x:Int, y:Int) {
-    v.add(arrayOf(x,y))
-    while (true){
-        if (v.size!=0){
-            v1=v.remove()
-            ex = v1[0]
-            ey = v1[1]
-            for(k in 0 until 4){
-                val nx = ex+dx[k]
-                val ny = ey+dy[k]
-                if (nx<0 || nx>=m ||ny<0||ny>=n) continue
-                if (map[ny][nx] ==0 || chk[ny][nx]==true) continue
+fun bfs(x:Int,y:Int, map : Array<IntArray>):Int{
+    val dx = intArrayOf(1,-1,0,0)
+    val dy = intArrayOf(0,0,1,-1)
+    val n = map.size
+    val m = map[0].size
+    var queue =ArrayDeque<Pair<Int, Int>>()
+    queue.add(Pair(x,y))
 
-                v.add(arrayOf(nx, ny))
-                map[ny][nx] = map[ey][ex]+1
-                chk[ny][nx]= true
+    while (queue.isNotEmpty()) {
+        val (ex, ey) = queue.removeFirst()
+
+        for (i in 0 until 4) {
+            val nx = ex + dx[i]
+            val ny = ey + dy[i]
+
+            if (nx in 0 until n && ny in 0 until m) {
+                if (map[nx][ny] == 1) {
+                    queue.add(Pair(nx, ny))
+                    map[nx][ny] = map[ex][ey]+1
+                }
             }
-        }else{
-            return
         }
     }
-
-
-
-
+    return map[n-1][m-1]
 }
+
+
