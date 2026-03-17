@@ -1,44 +1,43 @@
-import java.util.*
+import java.io.BufferedReader
+import java.io.InputStreamReader
 
-data class Dot(
-    val x: Int,
-    val y: Int
-)
 
-fun main() = with(Scanner(System.`in`)) {
-    var n = nextInt()
-    var m = nextInt()
-    var v: Queue<Int> = LinkedList()
-    var map = Array(m) { Dot(0, 0) }
-    var chk = Array(n) { false }
-    var rs = 0
-    v.add(1)
-    chk[0] = true
-    for (i in 0 until m) {
-        var a = nextInt()
-        var b = nextInt()
-        map[i] = Dot(a, b)
+fun main() {
+
+    val br = BufferedReader(InputStreamReader(System.`in`))
+    val size = br.readLine().toInt()
+    val node = br.readLine().toInt()
+
+    var graph=Array(size+1){ mutableListOf<Int>() }
+
+    repeat(node){
+        val (a, b ) = br.readLine().split(" ").map { it.toInt() }
+        graph[a].add(b)
+        graph[b].add(a)
     }
-
-    while (!v.isEmpty()) {
-        var dot = v.remove()
-
-        for (i in 0 until m){
-            if (map[i].x==dot && chk[map[i].y-1]==false){
-                v.add(map[i].y)
-                rs+=1
-                chk[map[i].y-1]=true
-            }else if (map[i].y==dot && chk[map[i].x-1]==false){
-                v.add(map[i].x)
-                rs+=1
-                chk[map[i].x-1]=true
-            }else{
-                continue
-            }
-        }
-    }
-    print(rs)
+    val result= bfs(1, graph, size)
+    print(result)
 
 }
 
+fun bfs(start : Int, graph : Array<MutableList<Int>>,size : Int):Int{
+    val visit = BooleanArray(size+1)
+    val queue = ArrayDeque<Int>()
 
+    var count = 0
+    queue.add(start)
+    visit[start]= true
+
+    while (queue.isNotEmpty()){
+        val now =queue.removeFirst()
+
+        for (next in graph[now]){
+            if (!visit[next]){
+                queue.add(next)
+                visit[next]=true
+                count++
+            }
+        }
+    }
+    return count
+}
