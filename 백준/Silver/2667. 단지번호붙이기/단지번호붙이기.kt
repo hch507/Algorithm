@@ -1,68 +1,53 @@
-import java.util.*
-import kotlin.collections.ArrayList
+import java.io.BufferedReader
+import java.io.InputStreamReader
 
-lateinit var map : Array<IntArray>
-lateinit var chk : Array<BooleanArray>
-var n = 0
-var cnt = 0
-lateinit var a : ArrayList<Int>
-var q :Queue<Dot> = LinkedList()
+lateinit var map: Array<IntArray>
+lateinit var visitored: Array<BooleanArray>
 
-data class Dot(
-    val y: Int,
-    val x: Int
-)
-val dy = arrayOf(0,1,0,-1)
-val dx = arrayOf(1,0,-1,0)
-var ex = 0
-var ey = 0
-fun main() = with(Scanner(System.`in`)){
-    n = nextInt()
-    a= ArrayList()
-    nextLine()
-    map = Array(n){IntArray(n)}
-    chk = Array(n){BooleanArray(n){false} }
-    for (j in 0 until n){
-        val line = nextLine()
-        for (i in 0 until n){
-            map[j][i]=line[i].toString().toInt()
-        }
+var dx = arrayOf(-1,1,0,0)
+var dy = arrayOf(0,0,-1,1)
+var count = 0
+var size = 0
+fun main() {
+    val br = BufferedReader(InputStreamReader(System.`in`))
+
+    size = br.readLine().toInt()
+    map = Array(size) {
+        br.readLine().map { it - '0' }.toIntArray()
     }
-
-    for (j in 0 until n){
-        for(i in 0 until n){
-            if (chk[j][i]==false && map[j][i]==1){
-                chk[j][i]=true
-                cnt+=1
-                bfs(j,i)
+    val result = mutableListOf<Int>()
+    visitored = Array(size) { BooleanArray(size) }
+    for (i in 0..size-1){
+        for (j in 0..size-1){
+            if (!visitored[i][j] && map[i][j]==1){
+                count=0
+                dfs(i,j)
+                result.add(count)
             }
         }
     }
-    a.sort()
-    println(cnt)
-    for (k in a){
-        println(k)
+    println(result.size)
+    result.sorted().forEach{
+        println(it)
     }
 
+
 }
-fun bfs(y:Int,x:Int){
-    q.add(Dot(y,x))
-    var sum = 1
-    while (!q.isEmpty()){
-        val dot =q.remove()
-        ey = dot.y
-        ex = dot.x
-        for (i in 0 until 4){
-            val ny = ey + dy[i]
-            val nx = ex + dx[i]
-            if (ny>=0 && ny<n && nx>=0 && nx < n){
-                if(chk[ny][nx]==false && map[ny][nx]==1){
-                    q.add(Dot(ny,nx))
-                    chk[ny][nx]=true
-                    sum+=1
-                }
+fun dfs(x:Int,y:Int){
+    visitored[x][y]=true
+    count++
+
+    for (i in 0..3){
+        val nx = x+ dx[i]
+        val ny = y+ dy[i]
+
+        if (nx in 0 until size && ny in 0 until size) {
+            if (map[nx][ny] == 1 && !visitored[nx][ny]) {
+                dfs(nx, ny)
             }
         }
     }
-    a.add(sum)
+
 }
+
+
