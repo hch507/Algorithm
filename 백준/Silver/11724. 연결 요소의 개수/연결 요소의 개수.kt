@@ -1,47 +1,40 @@
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
-fun main() {
-    val br = BufferedReader(InputStreamReader(System.`in`))
+lateinit var graph : Array<MutableList<Int>>
+lateinit var visitored : BooleanArray
+var count = 0
+fun main(){
+    var br = BufferedReader(InputStreamReader(System.`in`))
 
-    val (size, n) = br.readLine().split(" ").map{it.toInt()}
-    val graph = Array(size+1){ mutableListOf<Int>() }
-    val visited = BooleanArray(size+1)
-    var cnt = 0
-    repeat(n){
-        val (a, b) = br.readLine().split(" ").map{it.toInt()}
+    val(n, v) = br.readLine().split(" ").map { it.toInt() }
+    visitored = BooleanArray(n+1)
+    graph = Array(n+1){ mutableListOf() }
+    repeat(v){
+        var(a, b) = br.readLine().split(" ").map { it.toInt() }
+
         graph[a].add(b)
         graph[b].add(a)
     }
-    for (i in 1.. size){
-        if(!visited[i]){
-            bfs(i,visited,graph)
-            cnt++
+
+    for (i in 1..n){
+
+        if (!visitored[i]){
+            count++
+            dfs(i)
         }
     }
 
-    println(cnt)
+    print(count)
 }
 
-fun bfs(start : Int, visited : BooleanArray, graph:Array<MutableList<Int>>){
-    val queue = ArrayDeque<Int>()
+fun dfs(start : Int){
+    visitored[start] = true
 
-    queue.add(start)
-    visited[start]=true
-
-    while (queue.isNotEmpty()){
-        val now = queue.removeFirst()
-
-        for(next in graph[now]){
-            if (!visited[next]){
-                visited[next]=true
-                queue.add(next)
-            }
+    for (i in graph[start]){
+        if (!visitored[i]){
+            dfs(i)
         }
     }
 
-
 }
-
-
-
