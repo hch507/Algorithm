@@ -1,43 +1,40 @@
+
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
 
-fun main() {
+lateinit var graph: Array<MutableList<Int>>
+lateinit var visitored : BooleanArray
+var count = 0
+fun main(){
 
     val br = BufferedReader(InputStreamReader(System.`in`))
+
     val size = br.readLine().toInt()
-    val node = br.readLine().toInt()
+    val n = br.readLine().toInt()
+    graph = Array(size+1){ mutableListOf() }
 
-    var graph=Array(size+1){ mutableListOf<Int>() }
+    visitored = BooleanArray(size+1)
+    repeat(n){
+        var (a, b) = br.readLine().split(" ").map { it.toInt() }
 
-    repeat(node){
-        val (a, b ) = br.readLine().split(" ").map { it.toInt() }
         graph[a].add(b)
         graph[b].add(a)
     }
-    val result= bfs(1, graph, size)
-    print(result)
+
+    dfs(1)
+
+    print(count)
 
 }
 
-fun bfs(start : Int, graph : Array<MutableList<Int>>,size : Int):Int{
-    val visit = BooleanArray(size+1)
-    val queue = ArrayDeque<Int>()
+fun dfs(start : Int){
+    visitored[start] = true
 
-    var count = 0
-    queue.add(start)
-    visit[start]= true
-
-    while (queue.isNotEmpty()){
-        val now =queue.removeFirst()
-
-        for (next in graph[now]){
-            if (!visit[next]){
-                queue.add(next)
-                visit[next]=true
-                count++
-            }
+    for(i in graph[start]){
+        if (!visitored[i]){
+            count++
+            dfs(i)
         }
     }
-    return count
 }
